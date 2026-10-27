@@ -1,0 +1,6 @@
+# 本地凭据、部署数据
+dms.json
+*.env
+!server/vikunja.env.example
+__pycache__/
+.DS_Store

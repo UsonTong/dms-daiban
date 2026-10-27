@@ -1,0 +1,36 @@
+#!/bin/sh
+# 待办弹窗：没开就启动；在当前屏幕前台就收起；否则浮动弹到当前工作区并居中。
+# niri 没有"最小化"，收起 = 挪到当前显示器最后那个空工作区，不打乱现有布局。
+APP_ID=com.yl.vikunja_md
+BIN="@APP_BIN@"
+
+plan=$(python3 - "$APP_ID" <<'PY'
+import json, subprocess, sys
+q = lambda what: json.loads(subprocess.check_output(["niri", "msg", "-j", what]))
+wins = [w for w in q("windows") if w.get("app_id") == sys.argv[1]]
+spaces = q("workspaces")
+cur = next(s for s in spaces if s["is_focused"])
+if not wins:
+    print("launch")
+    sys.exit()
+w = wins[0]
+if w["is_focused"]:
+    # 收起：当前显示器上序号最大的工作区（niri 总在末尾留一个空的）
+    last = max(s["idx"] for s in spaces if s["output"] == cur["output"])
+    print(f"hide {w['id']} {last}")
+else:
+    print(f"show {w['id']} {cur['idx']} {'float' if w['is_floating'] else 'tile'}")
+PY
+)
+
+set -- $plan
+case "$1" in
+  launch) setsid -f "$BIN" >/dev/null 2>&1 ;;
+  hide) niri msg action move-window-to-workspace --window-id "$2" --focus false "$3" ;;
+  show)
+    niri msg action move-window-to-workspace --window-id "$2" --focus false "$3"
+    [ "$4" = tile ] && niri msg action move-window-to-floating --id "$2"
+    niri msg action focus-window --id "$2"
+    niri msg action center-window
+    ;;
+esac

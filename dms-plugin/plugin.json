@@ -1,0 +1,16 @@
+{
+    "id": "daiban",
+    "name": "待办",
+    "description": "Mod+D 弹出今天的待办（列表/甘特图），顶栏显示剩几件；数据在 Vikunja",
+    "version": "2.0.0",
+    "author": "yl",
+    "type": "composite",
+    "capabilities": ["daemon", "dankbar-widget"],
+    "icon": "task_alt",
+    "components": {
+        "daemon": "./DaibanDaemon.qml",
+        "widget": "./DaibanWidget.qml"
+    },
+    "requires_dms": ">=2.0.0",
+    "permissions": ["settings_read"]
+}

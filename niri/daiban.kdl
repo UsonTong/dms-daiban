@@ -1,0 +1,17 @@
+// 待办（dms-daiban）的 niri 配置片段。在 ~/.config/niri/config.kdl 里加：
+//   include "/path/to/dms-daiban/niri/daiban.kdl"
+
+binds {
+    // Mod+D：弹出"今天"面板（DMS 插件，和 Mod+Space 同一套居中弹窗）
+    Mod+D repeat=false hotkey-overlay-title="待办面板" { spawn "dms" "ipc" "call" "daiban" "toggle"; }
+    // Mod+Shift+D：弹出完整应用（浮动窗口，再按收起）
+    Mod+Shift+D repeat=false hotkey-overlay-title="待办（完整应用）" { spawn "daiban"; }
+}
+
+// 完整应用默认浮动显示在当前屏幕
+window-rule {
+    match app-id=r#"^com\.yl\.vikunja_md$"#
+    open-floating true
+    default-column-width { fixed 1100; }
+    default-window-height { fixed 780; }
+}
